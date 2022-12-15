@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /media/oem/DATA/20221/SFC-Routing
+CMAKE_SOURCE_DIR = /media/oem/DATA/20221/SFC
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /media/oem/DATA/20221/SFC-Routing
+CMAKE_BINARY_DIR = /media/oem/DATA/20221/SFC
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /media/oem/DATA/20221/SFC-Routing && $(CMAKE_COMMAND) -E cmake_progress_start /media/oem/DATA/20221/SFC-Routing/CMakeFiles /media/oem/DATA/20221/SFC-Routing/src//CMakeFiles/progress.marks
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/oem/DATA/20221/SFC-Routing/CMakeFiles 0
+	cd /media/oem/DATA/20221/SFC && $(CMAKE_COMMAND) -E cmake_progress_start /media/oem/DATA/20221/SFC/CMakeFiles /media/oem/DATA/20221/SFC/src//CMakeFiles/progress.marks
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /media/oem/DATA/20221/SFC/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/clean
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /media/oem/DATA/20221/SFC-Routing && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /media/oem/DATA/20221/SFC && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/CMakeFiles/SFC_Routing.dir/rule:
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/SFC_Routing.dir/rule
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/SFC_Routing.dir/rule
 .PHONY : src/CMakeFiles/SFC_Routing.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ SFC_Routing: src/CMakeFiles/SFC_Routing.dir/rule
 
 # fast build rule for target.
 SFC_Routing/fast:
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/build
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/build
 .PHONY : SFC_Routing/fast
 
 main.o: main.cpp.o
@@ -135,7 +135,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/main.cpp.o
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -143,7 +143,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/main.cpp.i
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -151,7 +151,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	cd /media/oem/DATA/20221/SFC-Routing && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/main.cpp.s
+	cd /media/oem/DATA/20221/SFC && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SFC_Routing.dir/build.make src/CMakeFiles/SFC_Routing.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -177,6 +177,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /media/oem/DATA/20221/SFC-Routing && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /media/oem/DATA/20221/SFC && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

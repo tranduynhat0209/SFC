@@ -11,6 +11,11 @@
 
 using namespace std;
 
+bool compareRequest(Request *r1, Request *r2)
+{
+    return r1->Weight() < r2->Weight();
+}
+
 SFCGraph::~SFCGraph()
 {
     for (map<int, set<int> *>::iterator pos = neighborVertices.begin(); pos != neighborVertices.end(); ++pos)
@@ -184,56 +189,131 @@ vector<vector<BasePath *>> SFCGraph::k_paths(int k)
         yenAlg.get_shortest_paths(graph->get_vertex(source_id), graph->get_vertex(sink_id), k, k_path);
 
         result.push_back(k_path);
-
     }
     return result;
 }
-bool SFCGraph::consume_path(BasePath *base_path, Request *request, map<pair<int, int>, double> *acc_edge_weight, map<int, double> *acc_node_caps)
+bool SFCGraph::consume_path(BasePath *base_path, Request *request, map<pair<int, int>, double> *acc_edge_weight, map<int, double> *acc_node_caps, double &R1, double &R2, double &R3)
 {
-    int previous_id = request->sourceID % nodeNum;
+    int previous_id = request->sourceID;
 
-    for (int i = 1; i < base_path->length(); i++)
+    double max_cpu = 0;
+    double max_mem = 0;
+    double max_band = 0;
+    for (int i = 0; i < base_path->length(); i++)
     {
+        double cpu_consumed = 0;
+        double mem_consumed = 0;
+        double band_consumed = 0;
         BaseVertex *vertex = base_path->GetVertex(i);
 
         int node_id = vertex->getID() % nodeNum;
 
         map<int, double>::iterator acc_node_pos = acc_node_caps->find(node_id);
-        if (acc_node_pos != acc_node_caps->end())
+        map<int, double>::iterator node_pos = node_caps.find(node_id);
+
+        if (acc_node_pos != acc_node_caps->end() && node_pos != node_caps.end())
         {
             double node_cap = acc_node_pos->second;
             map<int, NodeType>::iterator node_type_pos = node_type.find(node_id);
+
             if (node_type_pos != node_type.end())
             {
                 NodeType type = node_type_pos->second;
                 if (type == NodeType::Server)
                 {
                     node_cap -= request->cpu;
+                    cpu_consumed = 1 - (double(node_cap) / node_pos->second);
                 }
                 else
                 {
                     node_cap -= request->memory;
+                    mem_consumed = 1 - (double(node_cap) / node_pos->second);
                 }
             }
             if (node_cap < 0)
                 return false;
+
             acc_node_pos->second = node_cap;
         }
 
+        if (i == 0)
+            continue;
         pair<int, int> edge_id = previous_id < node_id ? make_pair(previous_id, node_id) : make_pair(node_id, previous_id);
-        map<pair<int, int>, double>::iterator band_pos = acc_edge_weight->find(edge_id);
-        if (band_pos != acc_edge_weight->end())
+        map<pair<int, int>, double>::iterator acc_band_pos = acc_edge_weight->find(edge_id);
+        map<pair<int, int>, double>::iterator band_pos = edgeWeight.find(edge_id);
+        if (acc_band_pos != acc_edge_weight->end() && band_pos != edgeWeight.end())
         {
-            if (band_pos->second - request->bandwidth)
+            if (acc_band_pos->second < request->bandwidth)
                 return false;
-            band_pos->second = band_pos->second - request->bandwidth;
+            acc_band_pos->second = acc_band_pos->second - request->bandwidth;
+            band_consumed = 1 - (double(acc_band_pos->second) / double(band_pos->second));
         }
-
+        max_cpu = max_cpu > cpu_consumed ? max_cpu : cpu_consumed;
+        max_mem = max_mem > mem_consumed ? max_mem : mem_consumed;
+        max_band = max_band > band_consumed ? max_band : band_consumed;
         previous_id = node_id;
     }
+
+    R1 = R1 > max_band ? R1 : max_band;
+    R2 = R2 > max_cpu ? R2 : max_cpu;
+    R3 = R3 > max_mem ? R3 : max_mem;
     return true;
 }
 
+int SFCGraph::count_satisfied(vector<vector<BasePath *>> paths, vector<int> gene)
+{
+    map<pair<int, int>, double> acc_edge_weight;
+    map<int, double> acc_node_caps;
+
+    acc_edge_weight.insert(edgeWeight.begin(), edgeWeight.end());
+    acc_node_caps.insert(node_caps.begin(), node_caps.end());
+
+    double R1 = 0, R2 = 0, R3 = 0;
+
+    int satisfied = 0;
+    for (int i = 0; i < gene.size(); i++)
+    {
+        int index = gene[i];
+        if (index == -1)
+        {
+            continue;
+        }
+
+        if (consume_path(paths[i][index], requests[i], &acc_edge_weight, &acc_node_caps, R1, R2, R3))
+        {
+            satisfied++;
+        }
+    }
+    return satisfied;
+}
+
+double SFCGraph::fitness(vector<vector<BasePath *>> paths, vector<int> gene)
+{
+    map<pair<int, int>, double> acc_edge_weight;
+    map<int, double> acc_node_caps;
+
+    acc_edge_weight.insert(edgeWeight.begin(), edgeWeight.end());
+    acc_node_caps.insert(node_caps.begin(), node_caps.end());
+
+    double R1 = 0, R2 = 0, R3 = 0;
+
+    int satisfied = 0;
+    for (int i = 0; i < gene.size(); i++)
+    {
+        int index = gene[i];
+        if (index == -1)
+        {
+            continue;
+        }
+
+        if (consume_path(paths[i][index], requests[i], &acc_edge_weight, &acc_node_caps, R1, R2, R3))
+        {
+            satisfied++;
+        }
+    }
+    double fitness = rho * (double(satisfied) / double(requestNum)) + (1 - rho) * (1 - (R1 + R2 + R3) / 3);
+    return fitness;
+}
 vector<string> line2words(string str)
 {
     vector<string> words;
@@ -258,7 +338,7 @@ vector<string> line2words(string str)
     return words;
 }
 
-SFCGraph::SFCGraph(const string &network_file_name, const string &request_file_name)
+SFCGraph::SFCGraph(const string &network_file_name, const string &request_file_name, double _rho)
 {
     /*
     map<int, set<int> *> neighborVertices;
@@ -397,4 +477,12 @@ SFCGraph::SFCGraph(const string &network_file_name, const string &request_file_n
         }
         requests_file.close();
     }
+
+    rho = _rho;
+    _sort_requests();
+}
+
+void SFCGraph::_sort_requests()
+{
+    sort(requests.begin(), requests.end(), compareRequest);
 }

@@ -1,4 +1,4 @@
-# Install script for directory: /media/oem/DATA/20221/SFC-Routing/src
+# Install script for directory: /media/oem/DATA/20221/SFC/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -15,6 +15,11 @@ struct Request
 	double cpu;
 	double memory;
 	vector<int> VNFs;
+
+	double Weight() const
+	{
+		return (bandwidth + cpu + memory) / 3;
+	}
 };
 
 enum NodeType
@@ -38,8 +43,11 @@ public:
 	int VNFNum;
 	int requestNum;
 
+	double rho;
+private:
+	void _sort_requests();
 public:
-	SFCGraph(const string &network_file_name, const string &request_file_name);
+	SFCGraph(const string &network_file_name, const string &request_file_name, double _rho);
 	~SFCGraph(void);
 
 	Graph *buildMultilayerGraph(Request *request);
@@ -47,7 +55,9 @@ public:
 	set<int> *get_nodes_set(int vnf);
 	Request *get_request(int index);
 	void clone_layers(Graph *&graph, int num_layer, Request *request);
-	bool consume_path(BasePath *base_path, Request *request, map<pair<int, int>, double> *acc_edge_weight, map<int, double> *acc_node_caps);
+	bool consume_path(BasePath *base_path, Request *request, map<pair<int, int>, double> *acc_edge_weight, map<int, double> *acc_node_caps, double &R1, double &R2, double &R3);
+	double fitness(vector<vector<BasePath *>> paths, vector<int> gene);
+	int count_satisfied(vector<vector<BasePath *>> paths, vector<int> gene);
 	double consume_node(Request *request, int node_id);
-	vector<vector<BasePath*>> k_paths(int k);
+	vector<vector<BasePath *>> k_paths(int k);
 };

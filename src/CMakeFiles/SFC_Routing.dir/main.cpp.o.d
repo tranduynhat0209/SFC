@@ -1,5 +1,5 @@
 src/CMakeFiles/SFC_Routing.dir/main.cpp.o: \
-  /media/oem/DATA/20221/SFC-Routing/src/main.cpp \
+  /media/oem/DATA/20221/SFC/src/main.cpp \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/limits \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/x86_64-linux-gnu/c++/12/bits/c++config.h \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/x86_64-linux-gnu/c++/12/bits/os_defines.h \
@@ -201,8 +201,9 @@ src/CMakeFiles/SFC_Routing.dir/main.cpp.o: \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/stl_tempbuf.h \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/uniform_int_dist.h \
-  /media/oem/DATA/20221/SFC-Routing/src/GraphElements.h \
-  /media/oem/DATA/20221/SFC-Routing/src/Graph.h \
-  /media/oem/DATA/20221/SFC-Routing/src/DijkstraShortestPathAlg.h \
-  /media/oem/DATA/20221/SFC-Routing/src/YenTopKShortestPathsAlg.h \
-  /media/oem/DATA/20221/SFC-Routing/src/SFCGraph.h
+  /media/oem/DATA/20221/SFC/src/GraphElements.h \
+  /media/oem/DATA/20221/SFC/src/Graph.h \
+  /media/oem/DATA/20221/SFC/src/DijkstraShortestPathAlg.h \
+  /media/oem/DATA/20221/SFC/src/YenTopKShortestPathsAlg.h \
+  /media/oem/DATA/20221/SFC/src/SFCGraph.h \
+  /media/oem/DATA/20221/SFC/src/GA.h
