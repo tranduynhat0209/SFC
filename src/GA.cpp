@@ -10,7 +10,7 @@ bool compareGene(Gene *g1, Gene *g2)
     return g1->Weight() < g2->Weight();
 }
 
-GA::GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _num_cross_mut)
+GA::GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _num_cross_mut, FitnessType _fitness_type)
 {
     sfcGraph = _sfcGraph;
     n_request = _sfcGraph->requestNum;
@@ -22,7 +22,7 @@ GA::GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _
     n_population = _n_population;
     mutate_prob = _mutate_prob;
     num_cross_mut = _num_cross_mut;
-
+    fitness_type = _fitness_type;
     _init_population();
 }
 
@@ -30,6 +30,23 @@ void GA::show_result() {
     // cout << "Weight: " << population[n_population - 1]->Weight() << endl;
     int num = sfcGraph->count_satisfied(paths, population[n_population - 1]->gene);
     cout << "Num: " << num << endl;
+}
+
+double GA::_fitness(vector<vector<BasePath *>> paths, vector<int> gene){
+    switch (fitness_type)
+    {
+    case FitnessType::FITNESS:
+        return sfcGraph->fitness(paths, gene);
+        break;
+    case FitnessType::FITNESS_1:
+        return sfcGraph->fitness1(paths, gene);
+        break;
+    case FitnessType::FITNESS_2:
+        return sfcGraph->fitness2(paths, gene);
+        break;
+    default:
+        return 0;
+    }
 }
 void GA::_init_population()
 {
@@ -43,7 +60,7 @@ void GA::_init_population()
             gene.push_back(num);
         }
 
-        double fitness = sfcGraph->fitness(paths, gene);
+        double fitness = _fitness(paths, gene);
 
         total_fitness += fitness;
         Gene *_gene = new Gene(gene, fitness);
@@ -74,8 +91,8 @@ void GA::_crossover_mutate(Gene *dad, Gene *mom)
     _mutate(&child_gene_1);
     _mutate(&child_gene_2);
 
-    double fitness_1 = sfcGraph->fitness(paths, child_gene_1);
-    double fitness_2 = sfcGraph->fitness(paths, child_gene_2);
+    double fitness_1 = _fitness(paths, child_gene_1);
+    double fitness_2 = _fitness(paths, child_gene_2);
 
     total_fitness += (fitness_1 + fitness_2);
 

@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 				{
 					string request_file = t1[i1] + "_" + t2[i2] + "_" + t3[i3] + "_" + t4[i4] + "requests.txt";
 					SFCGraph *sfc = new SFCGraph("input/" + network_file, "input/" + request_file, rho);
-					GA ga = GA(sfc, k, n_population, mutate_prob, num_cross_mut);
+					GA ga = GA(sfc, k, n_population, mutate_prob, num_cross_mut, FitnessType::FITNESS);
 					ga.n_round_evoluate(20);
 					ga.show_result();
 				}

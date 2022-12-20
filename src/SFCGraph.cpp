@@ -314,6 +314,36 @@ double SFCGraph::fitness(vector<vector<BasePath *>> paths, vector<int> gene)
     double fitness = rho * (double(satisfied) / double(requestNum)) + (1 - rho) * (1 - (R1 + R2 + R3) / 3);
     return fitness;
 }
+
+double SFCGraph::fitness1(vector<vector<BasePath *>> paths, vector<int> gene)
+{
+    int satisfied = count_satisfied(paths, gene);
+    return double(satisfied) / double(requestNum);
+}
+double SFCGraph::fitness2(vector<vector<BasePath *>> paths, vector<int> gene)
+{
+    map<pair<int, int>, double> acc_edge_weight;
+    map<int, double> acc_node_caps;
+
+    acc_edge_weight.insert(edgeWeight.begin(), edgeWeight.end());
+    acc_node_caps.insert(node_caps.begin(), node_caps.end());
+
+    double R1 = 0, R2 = 0, R3 = 0;
+
+    for (int i = 0; i < gene.size(); i++)
+    {
+        int index = gene[i];
+        if (index == -1)
+        {
+            continue;
+        }
+        else
+        {
+            consume_path(paths[i][index], requests[i], &acc_edge_weight, &acc_node_caps, R1, R2, R3);
+        }
+    }
+    return 1 - (R1 + R2 + R3) / 3;
+}
 vector<string> line2words(string str)
 {
     vector<string> words;

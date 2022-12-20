@@ -60,4 +60,7 @@ public:
 	int count_satisfied(vector<vector<BasePath *>> paths, vector<int> gene);
 	double consume_node(Request *request, int node_id);
 	vector<vector<BasePath *>> k_paths(int k);
+
+	double fitness1(vector<vector<BasePath *>> paths, vector<int> gene);
+	double fitness2(vector<vector<BasePath *>> paths, vector<int> gene);
 };
