@@ -30,9 +30,6 @@ public:
         cout << endl;
     }
 };
-enum FitnessType{
-    FITNESS, FITNESS_1, FITNESS_2
-};
 
 class GA
 {
@@ -47,16 +44,20 @@ public:
 
     double mutate_prob;
     int num_cross_mut;
-    FitnessType fitness_type;
+    double rho;
 
-    GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _num_cross_mut, FitnessType _fitness_type);
+    GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _num_cross_mut, double _rho);
+    GA(SFCGraph *_sfcGraph, vector<vector<BasePath *>> _paths, vector<int> _bounds, int _n_population, double _mutate_prob, int _num_cross_mut, double _rho);
+    GA(SFCGraph *_sfcGraph, vector<vector<BasePath *>> _paths, vector<int> _bounds, int _n_population, double _mutate_prob, int _num_cross_mut, double _rho, vector<Gene *> _population);
+
     void one_round_evoluate();
     void n_round_evoluate(int n_round);
     void show_result();
+
 private:
     void _init_population();
     void _crossover_mutate(Gene *dad, Gene *mom);
     void _mutate(vector<int> *g);
     void _survive();
-    double _fitness(vector<vector<BasePath *>> paths, vector<int> gene);
+    double _fitness(vector<int> gene);
 };

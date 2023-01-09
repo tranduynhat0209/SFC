@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <iostream>
+#include <vector>   // for vector
+#include <iterator> // for back_inserter
 #include "SFCGraph.h"
 #include "GraphElements.h"
 #include "GA.h"
@@ -10,7 +12,7 @@ bool compareGene(Gene *g1, Gene *g2)
     return g1->Weight() < g2->Weight();
 }
 
-GA::GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _num_cross_mut, FitnessType _fitness_type)
+GA::GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _num_cross_mut, double _rho)
 {
     sfcGraph = _sfcGraph;
     n_request = _sfcGraph->requestNum;
@@ -22,31 +24,65 @@ GA::GA(SFCGraph *_sfcGraph, int k, int _n_population, double _mutate_prob, int _
     n_population = _n_population;
     mutate_prob = _mutate_prob;
     num_cross_mut = _num_cross_mut;
-    fitness_type = _fitness_type;
+    rho = _rho;
     _init_population();
 }
+GA::GA(SFCGraph *_sfcGraph, vector<vector<BasePath *>> _paths, vector<int> _bounds, int _n_population, double _mutate_prob, int _num_cross_mut, double _rho)
+{
+    sfcGraph = _sfcGraph;
+    n_request = _sfcGraph->requestNum;
+    copy(_bounds.begin(), _bounds.end(), back_inserter(bounds));
+    for (vector<BasePath *> _p: _paths)
+    {
+        vector<BasePath *> p;
+        copy(_p.begin(), _p.end(), back_inserter(p));
+        paths.push_back(p);
+    }
 
-void GA::show_result() {
+    n_population = _n_population;
+    mutate_prob = _mutate_prob;
+    num_cross_mut = _num_cross_mut;
+    rho = _rho;
+    _init_population();
+}
+GA::GA(SFCGraph *_sfcGraph, vector<vector<BasePath *>> _paths, vector<int> _bounds, int _n_population, double _mutate_prob, int _num_cross_mut, double _rho, vector<Gene *> _population)
+{
+    sfcGraph = _sfcGraph;
+    n_request = _sfcGraph->requestNum;
+    copy(_bounds.begin(), _bounds.end(), back_inserter(bounds));
+    for (vector<BasePath *> _p: _paths)
+    {
+        vector<BasePath *> p;
+        copy(_p.begin(), _p.end(), back_inserter(p));
+        paths.push_back(p);
+    }
+
+    n_population = _n_population;
+    mutate_prob = _mutate_prob;
+    num_cross_mut = _num_cross_mut;
+    rho = _rho;
+
+    total_fitness = 0;
+    for (Gene *ind : _population)
+    {
+        double fitness = _fitness(ind->gene);
+        total_fitness += fitness;
+        Gene *new_ind = new Gene(ind->gene, fitness);
+        population.push_back(new_ind);
+    }
+    _survive();
+}
+
+void GA::show_result()
+{
     // cout << "Weight: " << population[n_population - 1]->Weight() << endl;
     int num = sfcGraph->count_satisfied(paths, population[n_population - 1]->gene);
     cout << "Num: " << num << endl;
 }
 
-double GA::_fitness(vector<vector<BasePath *>> paths, vector<int> gene){
-    switch (fitness_type)
-    {
-    case FitnessType::FITNESS:
-        return sfcGraph->fitness(paths, gene);
-        break;
-    case FitnessType::FITNESS_1:
-        return sfcGraph->fitness1(paths, gene);
-        break;
-    case FitnessType::FITNESS_2:
-        return sfcGraph->fitness2(paths, gene);
-        break;
-    default:
-        return 0;
-    }
+double GA::_fitness(vector<int> gene)
+{
+    return sfcGraph->fitness(paths, gene, rho);
 }
 void GA::_init_population()
 {
@@ -60,7 +96,7 @@ void GA::_init_population()
             gene.push_back(num);
         }
 
-        double fitness = _fitness(paths, gene);
+        double fitness = _fitness(gene);
 
         total_fitness += fitness;
         Gene *_gene = new Gene(gene, fitness);
@@ -91,8 +127,8 @@ void GA::_crossover_mutate(Gene *dad, Gene *mom)
     _mutate(&child_gene_1);
     _mutate(&child_gene_2);
 
-    double fitness_1 = _fitness(paths, child_gene_1);
-    double fitness_2 = _fitness(paths, child_gene_2);
+    double fitness_1 = _fitness(child_gene_1);
+    double fitness_2 = _fitness(child_gene_2);
 
     total_fitness += (fitness_1 + fitness_2);
 
@@ -175,6 +211,8 @@ void GA::_survive()
     delete[] alive;
 
     sort(population.begin(), population.end(), compareGene);
+
+    cout << _fitness(population[n_population - 1]->gene) << endl;
 }
 
 void GA::one_round_evoluate()

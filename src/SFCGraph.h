@@ -42,12 +42,10 @@ public:
 	int nodeNum;
 	int VNFNum;
 	int requestNum;
-
-	double rho;
 private:
 	void _sort_requests();
 public:
-	SFCGraph(const string &network_file_name, const string &request_file_name, double _rho);
+	SFCGraph(const string &network_file_name, const string &request_file_name);
 	~SFCGraph(void);
 
 	Graph *buildMultilayerGraph(Request *request);
@@ -56,11 +54,8 @@ public:
 	Request *get_request(int index);
 	void clone_layers(Graph *&graph, int num_layer, Request *request);
 	bool consume_path(BasePath *base_path, Request *request, map<pair<int, int>, double> *acc_edge_weight, map<int, double> *acc_node_caps, double &R1, double &R2, double &R3);
-	double fitness(vector<vector<BasePath *>> paths, vector<int> gene);
+	double fitness(vector<vector<BasePath *>> paths, vector<int> gene, double rho);
 	int count_satisfied(vector<vector<BasePath *>> paths, vector<int> gene);
 	double consume_node(Request *request, int node_id);
 	vector<vector<BasePath *>> k_paths(int k);
-
-	double fitness1(vector<vector<BasePath *>> paths, vector<int> gene);
-	double fitness2(vector<vector<BasePath *>> paths, vector<int> gene);
 };

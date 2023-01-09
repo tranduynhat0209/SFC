@@ -206,4 +206,4 @@ src/CMakeFiles/SFC_Routing.dir/main.cpp.o: \
   /media/oem/DATA/20221/SFC/src/DijkstraShortestPathAlg.h \
   /media/oem/DATA/20221/SFC/src/YenTopKShortestPathsAlg.h \
   /media/oem/DATA/20221/SFC/src/SFCGraph.h \
-  /media/oem/DATA/20221/SFC/src/GA.h
+  /media/oem/DATA/20221/SFC/src/CGA.h /media/oem/DATA/20221/SFC/src/GA.h

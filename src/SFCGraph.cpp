@@ -211,9 +211,10 @@ bool SFCGraph::consume_path(BasePath *base_path, Request *request, map<pair<int,
         map<int, double>::iterator acc_node_pos = acc_node_caps->find(node_id);
         map<int, double>::iterator node_pos = node_caps.find(node_id);
 
+        double node_cap;
         if (acc_node_pos != acc_node_caps->end() && node_pos != node_caps.end())
         {
-            double node_cap = acc_node_pos->second;
+            node_cap = acc_node_pos->second;
             map<int, NodeType>::iterator node_type_pos = node_type.find(node_id);
 
             if (node_type_pos != node_type.end())
@@ -233,7 +234,11 @@ bool SFCGraph::consume_path(BasePath *base_path, Request *request, map<pair<int,
             if (node_cap < 0)
                 return false;
 
-            acc_node_pos->second = node_cap;
+            
+        }
+        else
+        {
+            return false;
         }
 
         if (i == 0)
@@ -247,6 +252,12 @@ bool SFCGraph::consume_path(BasePath *base_path, Request *request, map<pair<int,
                 return false;
             acc_band_pos->second = acc_band_pos->second - request->bandwidth;
             band_consumed = 1 - (double(acc_band_pos->second) / double(band_pos->second));
+
+            acc_node_pos->second = node_cap;
+        }
+        else
+        {
+            return false;
         }
         max_cpu = max_cpu > cpu_consumed ? max_cpu : cpu_consumed;
         max_mem = max_mem > mem_consumed ? max_mem : mem_consumed;
@@ -287,7 +298,7 @@ int SFCGraph::count_satisfied(vector<vector<BasePath *>> paths, vector<int> gene
     return satisfied;
 }
 
-double SFCGraph::fitness(vector<vector<BasePath *>> paths, vector<int> gene)
+double SFCGraph::fitness(vector<vector<BasePath *>> paths, vector<int> gene, double rho)
 {
     map<pair<int, int>, double> acc_edge_weight;
     map<int, double> acc_node_caps;
@@ -311,39 +322,11 @@ double SFCGraph::fitness(vector<vector<BasePath *>> paths, vector<int> gene)
             satisfied++;
         }
     }
+
     double fitness = rho * (double(satisfied) / double(requestNum)) + (1 - rho) * (1 - (R1 + R2 + R3) / 3);
     return fitness;
 }
 
-double SFCGraph::fitness1(vector<vector<BasePath *>> paths, vector<int> gene)
-{
-    int satisfied = count_satisfied(paths, gene);
-    return double(satisfied) / double(requestNum);
-}
-double SFCGraph::fitness2(vector<vector<BasePath *>> paths, vector<int> gene)
-{
-    map<pair<int, int>, double> acc_edge_weight;
-    map<int, double> acc_node_caps;
-
-    acc_edge_weight.insert(edgeWeight.begin(), edgeWeight.end());
-    acc_node_caps.insert(node_caps.begin(), node_caps.end());
-
-    double R1 = 0, R2 = 0, R3 = 0;
-
-    for (int i = 0; i < gene.size(); i++)
-    {
-        int index = gene[i];
-        if (index == -1)
-        {
-            continue;
-        }
-        else
-        {
-            consume_path(paths[i][index], requests[i], &acc_edge_weight, &acc_node_caps, R1, R2, R3);
-        }
-    }
-    return 1 - (R1 + R2 + R3) / 3;
-}
 vector<string> line2words(string str)
 {
     vector<string> words;
@@ -368,7 +351,7 @@ vector<string> line2words(string str)
     return words;
 }
 
-SFCGraph::SFCGraph(const string &network_file_name, const string &request_file_name, double _rho)
+SFCGraph::SFCGraph(const string &network_file_name, const string &request_file_name)
 {
     /*
     map<int, set<int> *> neighborVertices;
@@ -508,7 +491,6 @@ SFCGraph::SFCGraph(const string &network_file_name, const string &request_file_n
         requests_file.close();
     }
 
-    rho = _rho;
     _sort_requests();
 }
 

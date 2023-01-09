@@ -92,6 +92,7 @@ SFC_Routing_EXTERNAL_OBJECTS =
 
 bin/SFC_Routing: src/CMakeFiles/SFC_Routing.dir/main.cpp.o
 bin/SFC_Routing: src/CMakeFiles/SFC_Routing.dir/build.make
+bin/SFC_Routing: src/CGA.cpp
 bin/SFC_Routing: src/DijkstraShortestPathAlg.cpp
 bin/SFC_Routing: src/GA.cpp
 bin/SFC_Routing: src/Graph.cpp

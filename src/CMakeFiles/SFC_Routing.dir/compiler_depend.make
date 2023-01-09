@@ -220,6 +220,7 @@ src/CMakeFiles/SFC_Routing.dir/main.cpp.o: src/main.cpp \
   src/DijkstraShortestPathAlg.h \
   src/YenTopKShortestPathsAlg.h \
   src/SFCGraph.h \
+  src/CGA.h \
   src/GA.h
 
 
@@ -488,6 +489,8 @@ src/main.cpp:
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
 /usr/include/c++/12/set:
+
+src/CGA.h:
 
 /usr/include/c++/12/bits/stl_algobase.h:
 
